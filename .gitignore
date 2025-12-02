@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Dataset and Images (EXCLUDE FROM GIT)
+severstal-steel-defect-detection/
+data/processed/
+data/generated/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+
+# Model Checkpoints (EXCLUDE FROM GIT)
+checkpoints/
+*.pth
+*.pt
+*.ckpt
+
+# Results (EXCLUDE FROM GIT)
+results/
+*.csv
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
