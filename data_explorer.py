@@ -179,8 +179,8 @@ def main():
     print(f"Results saved to: {RESULTS_DIR}/plots/")
     print("\nKey Findings:")
     print("  - Dataset is highly imbalanced")
-    print("  - Type 3 and Type 4 are the rarest defects")
-    print("  - GAN will focus on generating Type 3 and Type 4 samples")
+    print("  - Type 2 (247 samples, 1.9%) and Type 4 (801 samples, 6.2%) are the rarest defects")
+    print("  - GAN will focus on generating Type 2 and Type 4 samples")
     print("="*60)
 
 

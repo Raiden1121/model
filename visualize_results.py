@@ -17,7 +17,7 @@ from utils.helpers import ensure_dir
 
 def visualize_gan_samples():
     """Visualize GAN-generated samples"""
-    print(\"Visualizing GAN-generated samples...\")
+    print("Visualizing GAN-generated samples...")
     
     output_dir = os.path.join(RESULTS_DIR, 'gan_samples')
     
@@ -44,7 +44,7 @@ def visualize_gan_samples():
                 plt.savefig(save_path, dpi=300, bbox_inches='tight')
                 plt.close()
                 
-                print(f\"  Saved Type {defect_type} samples: {save_path}\")
+                print(f"  Saved Type {defect_type} samples: {save_path}")
 
 
 def plot_confusion_matrix(cm, title, save_path):
@@ -71,16 +71,16 @@ def plot_confusion_matrix(cm, title, save_path):
 
 
 def visualize_confusion_matrices():
-    \"\"\"Visualize confusion matrices for baseline and augmented models\"\"\"
-    print(\"\\nVisualizing confusion matrices...\")
+    """Visualize confusion matrices for baseline and augmented models"""
+    print("\\nVisualizing confusion matrices...")
     
     metrics_path = os.path.join(RESULTS_DIR, 'metrics', 'evaluation_results.pth')
     
     if not os.path.exists(metrics_path):
-        print(\"  Warning: Evaluation results not found. Run evaluate.py first.\")
+        print("  Warning: Evaluation results not found. Run evaluate.py first.")
         return
     
-    results = torch.load(metrics_path)
+    results = torch.load(metrics_path, weights_only=False)
     cm_dir = os.path.join(RESULTS_DIR, 'confusion_matrices')
     ensure_dir(cm_dir)
     
@@ -90,17 +90,17 @@ def visualize_confusion_matrices():
             title = f'Confusion Matrix - {mode.upper()} Model'
             save_path = os.path.join(cm_dir, f'confusion_matrix_{mode}.png')
             plot_confusion_matrix(cm, title, save_path)
-            print(f\"  Saved {mode} confusion matrix: {save_path}\")
+            print(f"  Saved {mode} confusion matrix: {save_path}")
 
 
 def plot_performance_comparison():
-    \"\"\"Plot performance comparison between baseline and augmented\"\"\"
-    print(\"\\nPlotting performance comparison...\")
+    """Plot performance comparison between baseline and augmented"""
+    print("\\nPlotting performance comparison...")
     
     comparison_path = os.path.join(RESULTS_DIR, 'metrics', 'comparison.csv')
     
     if not os.path.exists(comparison_path):
-        print(\"  Warning: Comparison results not found. Run evaluate.py first.\")
+        print("  Warning: Comparison results not found. Run evaluate.py first.")
         return
     
     df = pd.read_csv(comparison_path)
@@ -143,23 +143,23 @@ def plot_performance_comparison():
     plt.savefig(save_path, dpi=300, bbox_inches='tight')
     plt.close()
     
-    print(f\"  Saved performance comparison: {save_path}\")
+    print(f"  Saved performance comparison: {save_path}")
 
 
 def plot_per_class_recall():
-    \"\"\"Plot per-class recall comparison\"\"\"
-    print(\"\\nPlotting per-class recall comparison...\")
+    """Plot per-class recall comparison"""
+    print("\\nPlotting per-class recall comparison...")
     
     metrics_path = os.path.join(RESULTS_DIR, 'metrics', 'evaluation_results.pth')
     
     if not os.path.exists(metrics_path):
-        print(\"  Warning: Evaluation results not found. Run evaluate.py first.\")
+        print("  Warning: Evaluation results not found. Run evaluate.py first.")
         return
     
-    results = torch.load(metrics_path)
+    results = torch.load(metrics_path, weights_only=False)
     
     if 'baseline' not in results or 'augmented' not in results:
-        print(\"  Warning: Need both baseline and augmented results.\")
+        print("  Warning: Need both baseline and augmented results.")
         return
     
     baseline_recall = results['baseline']['metrics']['recall_per_class']
@@ -201,14 +201,14 @@ def plot_per_class_recall():
     plt.savefig(save_path, dpi=300, bbox_inches='tight')
     plt.close()
     
-    print(f\"  Saved per-class recall: {save_path}\")
+    print(f"  Saved per-class recall: {save_path}")
 
 
 def main():
-    \"\"\"Generate all visualizations\"\"\"
-    print(\"=\"*70)
-    print(\"GENERATING VISUALIZATIONS\")
-    print(\"=\"*70)
+    """Generate all visualizations"""
+    print("="*70)
+    print("GENERATING VISUALIZATIONS")
+    print("="*70)
     
     ensure_dir(os.path.join(RESULTS_DIR, 'plots'))
     
@@ -222,12 +222,12 @@ def main():
     plot_performance_comparison()
     plot_per_class_recall()
     
-    print(f\"\\n{'='*70}\")
-    print(\"VISUALIZATION COMPLETE!\")
-    print(f\"{'='*70}\")
-    print(f\"Visualizations saved to: {RESULTS_DIR}\")
-    print(f\"{'='*70}\\n\")
+    print(f"\\n{'='*70}")
+    print("VISUALIZATION COMPLETE!")
+    print(f"{'='*70}")
+    print(f"Visualizations saved to: {RESULTS_DIR}")
+    print(f"{'='*70}\\n")
 
 
-if __name__ == \"__main__\":
+if __name__ == "__main__":
     main()

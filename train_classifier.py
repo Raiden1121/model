@@ -59,13 +59,13 @@ class SteelDefectDataset(Dataset):
                         'is_synthetic': True
                     })
                 
-                print(f\"  Added {len(synth_images)} synthetic {class_name} images\")
+                print(f"  Added {len(synth_images)} synthetic {class_name} images")
         
         if synthetic_data:
             synthetic_df = pd.DataFrame(synthetic_data)
             self.df['is_synthetic'] = False
             self.df = pd.concat([self.df, synthetic_df], ignore_index=True)
-            print(f\"Total dataset size after augmentation: {len(self.df)}\")
+            print(f"Total dataset size after augmentation: {len(self.df)}")
     
     def __len__(self):
         return len(self.df)
@@ -95,7 +95,7 @@ def train_epoch(model, dataloader, criterion, optimizer, device):
     all_preds = []
     all_labels = []
     
-    pbar = tqdm(dataloader, desc=\"Training\")
+    pbar = tqdm(dataloader, desc="Training")
     for images, labels in pbar:
         images, labels = images.to(device), labels.to(device)
         
@@ -130,7 +130,7 @@ def validate(model, dataloader, criterion, device):
     all_labels = []
     
     with torch.no_grad():
-        for images, labels in tqdm(dataloader, desc=\"Validating\"):
+        for images, labels in tqdm(dataloader, desc="Validating"):
             images, labels = images.to(device), labels.to(device)
             
             outputs = model(images)
@@ -154,9 +154,9 @@ def train_classifier(mode='baseline'):
     Args:
         mode: 'baseline' (real data only) or 'augmented' (real + GAN data)
     """
-    print(\"=\"*70)
-    print(f\"TRAINING STEEL DEFECT CLASSIFIER - {mode.upper()} MODE\")
-    print(\"=\"*70)
+    print("="*70)
+    print(f"TRAINING STEEL DEFECT CLASSIFIER - {mode.upper()} MODE")
+    print("="*70)
     
     set_seed(RANDOM_SEED)
     
@@ -164,13 +164,13 @@ def train_classifier(mode='baseline'):
     checkpoint_dir = os.path.join(CHECKPOINT_DIR, mode)
     ensure_dir(checkpoint_dir)
     
-    print(f\"\\nConfiguration:\")
-    print(f\"  Mode: {mode}\")
-    print(f\"  Checkpoint directory: {checkpoint_dir}\")
-    print(f\"  Device: {DEVICE}\")
-    print(f\"  Epochs: {CLASSIFIER_EPOCHS}\")
-    print(f\"  Batch size: {CLASSIFIER_BATCH_SIZE}\")
-    print(f\"  Learning rate: {CLASSIFIER_LR}\")
+    print(f"\\nConfiguration:")
+    print(f"  Mode: {mode}")
+    print(f"  Checkpoint directory: {checkpoint_dir}")
+    print(f"  Device: {DEVICE}")
+    print(f"  Epochs: {CLASSIFIER_EPOCHS}")
+    print(f"  Batch size: {CLASSIFIER_BATCH_SIZE}")
+    print(f"  Learning rate: {CLASSIFIER_LR}")
     
     # Data transforms
     train_transform = transforms.Compose([
@@ -196,10 +196,10 @@ def train_classifier(mode='baseline'):
             synth_dir = os.path.join(GENERATED_DIR, class_name.lower())
             if os.path.exists(synth_dir):
                 augmented_dirs[class_idx] = synth_dir
-                print(f\"  Will use synthetic {class_name} data from: {synth_dir}\")
+                print(f"  Will use synthetic {class_name} data from: {synth_dir}")
     
     # Datasets
-    print(\"\\nLoading datasets...\")
+    print("\\nLoading datasets...")
     train_dataset = SteelDefectDataset(
         os.path.join(PROCESSED_DIR, 'train.csv'),
         TRAIN_IMAGES,
@@ -218,12 +218,12 @@ def train_classifier(mode='baseline'):
     val_loader = DataLoader(val_dataset, batch_size=CLASSIFIER_BATCH_SIZE, 
                             shuffle=False, num_workers=2)
     
-    print(f\"  Train size: {len(train_dataset)}\")
-    print(f\"  Val size: {len(val_dataset)}\")
+    print(f"  Train size: {len(train_dataset)}")
+    print(f"  Val size: {len(val_dataset)}")
     
     # Model
     model = SteelDefectClassifier(num_classes=NUM_CLASSES, pretrained=True).to(DEVICE)
-    print(f\"\\nModel parameters: {sum(p.numel() for p in model.parameters()):,}\")
+    print(f"\\nModel parameters: {sum(p.numel() for p in model.parameters()):,}")
     
     # Loss with class weights
     train_df = pd.read_csv(os.path.join(PROCESSED_DIR, 'train.csv'))
@@ -231,12 +231,12 @@ def train_classifier(mode='baseline'):
     criterion = nn.CrossEntropyLoss(weight=class_weights)
     
     optimizer = optim.Adam(model.parameters(), lr=CLASSIFIER_LR)
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5, verbose=True)
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5)
     
     # Training loop
-    print(f\"\\n{'='*70}\")
-    print(\"STARTING TRAINING\")
-    print(f\"{'='*70}\\n\")
+    print(f"\\n{'='*70}")
+    print("STARTING TRAINING")
+    print(f"{'='*70}\\n")
     
     best_val_loss = float('inf')
     patience_counter = 0
@@ -244,8 +244,8 @@ def train_classifier(mode='baseline'):
     train_accs, val_accs = [], []
     
     for epoch in range(1, CLASSIFIER_EPOCHS + 1):
-        print(f\"\\nEpoch {epoch}/{CLASSIFIER_EPOCHS}\")
-        print(\"-\" * 50)
+        print(f"\\nEpoch {epoch}/{CLASSIFIER_EPOCHS}")
+        print("-" * 50)
         
         # Train
         train_loss, train_acc = train_epoch(model, train_loader, criterion, optimizer, DEVICE)
@@ -260,8 +260,8 @@ def train_classifier(mode='baseline'):
         # Learning rate scheduling
         scheduler.step(val_loss)
         
-        print(f\"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.4f}\")
-        print(f\"Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}\")
+        print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.4f}")
+        print(f"Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}")
         
         # Save best model
         if val_loss < best_val_loss:
@@ -271,13 +271,13 @@ def train_classifier(mode='baseline'):
                 model, optimizer, epoch, val_loss,
                 os.path.join(checkpoint_dir, 'best.pth')
             )
-            print(\"✓ Saved best model\")
+            print("✓ Saved best model")
         else:
             patience_counter += 1
         
         # Early stopping
         if patience_counter >= EARLY_STOPPING_PATIENCE:
-            print(f\"\\nEarly stopping triggered after {epoch} epochs\")
+            print(f"\\nEarly stopping triggered after {epoch} epochs")
             break
     
     # Save final model
@@ -295,12 +295,12 @@ def train_classifier(mode='baseline'):
     }
     torch.save(history, os.path.join(checkpoint_dir, 'training_history.pth'))
     
-    print(f\"\\n{'='*70}\")
-    print(\"TRAINING COMPLETE!\")
-    print(f\"{'='*70}\")
-    print(f\"Best validation loss: {best_val_loss:.4f}\")
-    print(f\"Models saved to: {checkpoint_dir}\")
-    print(f\"{'='*70}\\n\")
+    print(f"\\n{'='*70}")
+    print("TRAINING COMPLETE!")
+    print(f"{'='*70}")
+    print(f"Best validation loss: {best_val_loss:.4f}")
+    print(f"Models saved to: {checkpoint_dir}")
+    print(f"{'='*70}\\n")
 
 
 def main():
@@ -313,5 +313,5 @@ def main():
     train_classifier(args.mode)
 
 
-if __name__ == \"__main__\":
+if __name__ == "__main__":
     main()

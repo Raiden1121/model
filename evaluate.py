@@ -54,9 +54,9 @@ def calculate_metrics(preds, labels):
 
 def evaluate():
     """Evaluate both baseline and augmented models"""
-    print(\"=\"*70)
-    print(\"EVALUATING CLASSIFIERS\")
-    print(\"=\"*70)
+    print("="*70)
+    print("EVALUATING CLASSIFIERS")
+    print("="*70)
     
     # Test data
     test_transform = transforms.Compose([
@@ -74,7 +74,7 @@ def evaluate():
     test_loader = DataLoader(test_dataset, batch_size=CLASSIFIER_BATCH_SIZE, 
                             shuffle=False, num_workers=2)
     
-    print(f\"\\nTest dataset size: {len(test_dataset)}\")
+    print(f"\\nTest dataset size: {len(test_dataset)}")
     
     # Results directory
     metrics_dir = os.path.join(RESULTS_DIR, 'metrics')
@@ -83,22 +83,22 @@ def evaluate():
     results = {}
     
     for mode in ['baseline', 'augmented']:
-        print(f\"\\n{'='*70}\")
-        print(f\"EVALUATING {mode.upper()} MODEL\")
-        print(f\"{'='*70}\")
+        print(f"\\n{'='*70}")
+        print(f"EVALUATING {mode.upper()} MODEL")
+        print(f"{'='*70}")
         
         # Load model
         checkpoint_path = os.path.join(CHECKPOINT_DIR, mode, 'best.pth')
         
         if not os.path.exists(checkpoint_path):
-            print(f\"Warning: Checkpoint not found: {checkpoint_path}\")
-            print(f\"Skipping {mode} evaluation\")
+            print(f"Warning: Checkpoint not found: {checkpoint_path}")
+            print(f"Skipping {mode} evaluation")
             continue
         
         model = SteelDefectClassifier(num_classes=NUM_CLASSES, pretrained=False).to(DEVICE)
         checkpoint = torch.load(checkpoint_path, map_location=DEVICE)
         model.load_state_dict(checkpoint['model_state_dict'])
-        print(f\"Loaded model from: {checkpoint_path}\")
+        print(f"Loaded model from: {checkpoint_path}")
         
         # Evaluate
         preds, labels = evaluate_model(model, test_loader, DEVICE)
@@ -112,40 +112,40 @@ def evaluate():
         }
         
         # Print results
-        print(f\"\\n{mode.upper()} Results:\")
-        print(\"-\" * 50)
-        print(f\"Overall Accuracy: {metrics['accuracy']:.4f}\")
-        print(f\"Macro Precision: {metrics['precision_macro']:.4f}\")
-        print(f\"Macro Recall: {metrics['recall_macro']:.4f}\")
-        print(f\"Macro F1-Score: {metrics['f1_macro']:.4f}\")
+        print(f"\\n{mode.upper()} Results:")
+        print("-" * 50)
+        print(f"Overall Accuracy: {metrics['accuracy']:.4f}")
+        print(f"Macro Precision: {metrics['precision_macro']:.4f}")
+        print(f"Macro Recall: {metrics['recall_macro']:.4f}")
+        print(f"Macro F1-Score: {metrics['f1_macro']:.4f}")
         
-        print(f\"\\nPer-Class Metrics:\")
+        print(f"\\nPer-Class Metrics:")
         for i, class_name in enumerate(CLASS_NAMES):
-            print(f\"  {class_name}:\")
-            print(f\"    Precision: {metrics['precision_per_class'][i]:.4f}\")
-            print(f\"    Recall: {metrics['recall_per_class'][i]:.4f}\")
-            print(f\"    F1-Score: {metrics['f1_per_class'][i]:.4f}\")
+            print(f"  {class_name}:")
+            print(f"    Precision: {metrics['precision_per_class'][i]:.4f}")
+            print(f"    Recall: {metrics['recall_per_class'][i]:.4f}")
+            print(f"    F1-Score: {metrics['f1_per_class'][i]:.4f}")
         
         # Save detailed results
         with open(os.path.join(metrics_dir, f'{mode}_metrics.txt'), 'w') as f:
-            f.write(f\"{mode.upper()} MODEL EVALUATION\\n\")
-            f.write(\"=\" * 50 + \"\\n\\n\")
-            f.write(f\"Overall Accuracy: {metrics['accuracy']:.4f}\\n\")
-            f.write(f\"Macro Precision: {metrics['precision_macro']:.4f}\\n\")
-            f.write(f\"Macro Recall: {metrics['recall_macro']:.4f}\\n\")
-            f.write(f\"Macro F1-Score: {metrics['f1_macro']:.4f}\\n\\n\")
-            f.write(\"Per-Class Metrics:\\n\")
+            f.write(f"{mode.upper()} MODEL EVALUATION\\n")
+            f.write("=" * 50 + "\\n\\n")
+            f.write(f"Overall Accuracy: {metrics['accuracy']:.4f}\\n")
+            f.write(f"Macro Precision: {metrics['precision_macro']:.4f}\\n")
+            f.write(f"Macro Recall: {metrics['recall_macro']:.4f}\\n")
+            f.write(f"Macro F1-Score: {metrics['f1_macro']:.4f}\\n\\n")
+            f.write("Per-Class Metrics:\\n")
             for i, class_name in enumerate(CLASS_NAMES):
-                f.write(f\"\\n{class_name}:\\n\")
-                f.write(f\"  Precision: {metrics['precision_per_class'][i]:.4f}\\n\")
-                f.write(f\"  Recall: {metrics['recall_per_class'][i]:.4f}\\n\")
-                f.write(f\"  F1-Score: {metrics['f1_per_class'][i]:.4f}\\n\")
+                f.write(f"\\n{class_name}:\\n")
+                f.write(f"  Precision: {metrics['precision_per_class'][i]:.4f}\\n")
+                f.write(f"  Recall: {metrics['recall_per_class'][i]:.4f}\\n")
+                f.write(f"  F1-Score: {metrics['f1_per_class'][i]:.4f}\\n")
     
     # Compare results
     if 'baseline' in results and 'augmented' in results:
-        print(f\"\\n{'='*70}\")
-        print(\"COMPARISON: BASELINE vs AUGMENTED\")
-        print(f\"{'='*70}\")
+        print(f"\\n{'='*70}")
+        print("COMPARISON: BASELINE vs AUGMENTED")
+        print(f"{'='*70}")
         
         comparison_data = []
         
@@ -157,17 +157,17 @@ def evaluate():
             
             comparison_data.append({
                 'Metric': metric_name.replace('_', ' ').title(),
-                'Baseline': f\"{baseline_val:.4f}\",
-                'Augmented': f\"{augmented_val:.4f}\",
-                'Improvement': f\"{improvement:+.4f} ({improvement_pct:+.1f}%)\"
+                'Baseline': f"{baseline_val:.4f}",
+                'Augmented': f"{augmented_val:.4f}",
+                'Improvement': f"{improvement:+.4f} ({improvement_pct:+.1f}%)"
             })
         
         comparison_df = pd.DataFrame(comparison_data)
-        print(\"\\n\" + comparison_df.to_string(index=False))
+        print("\\n" + comparison_df.to_string(index=False))
         
         # Per-class comparison
-        print(f\"\\nPer-Class Recall Comparison:\")
-        print(\"-\" * 70)
+        print(f"\\nPer-Class Recall Comparison:")
+        print("-" * 70)
         
         for i, class_name in enumerate(CLASS_NAMES):
             baseline_recall = results['baseline']['metrics']['recall_per_class'][i]
@@ -175,9 +175,9 @@ def evaluate():
             improvement = augmented_recall - baseline_recall
             improvement_pct = (improvement / baseline_recall) * 100 if baseline_recall > 0 else 0
             
-            print(f\"{class_name:15s} | Baseline: {baseline_recall:.4f} | \"
-                  f\"Augmented: {augmented_recall:.4f} | \"
-                  f\"Δ: {improvement:+.4f} ({improvement_pct:+.1f}%)\")
+            print(f"{class_name:15s} | Baseline: {baseline_recall:.4f} | "
+                  f"Augmented: {augmented_recall:.4f} | "
+                  f"Δ: {improvement:+.4f} ({improvement_pct:+.1f}%)")
         
         # Save comparison
         comparison_df.to_csv(os.path.join(metrics_dir, 'comparison.csv'), index=False)
@@ -185,16 +185,16 @@ def evaluate():
     # Save all results
     torch.save(results, os.path.join(metrics_dir, 'evaluation_results.pth'))
     
-    print(f\"\\n{'='*70}\")
-    print(\"EVALUATION COMPLETE!\")
-    print(f\"{'='*70}\")
-    print(f\"Results saved to: {metrics_dir}\")
-    print(f\"{'='*70}\\n\")
+    print(f"\\n{'='*70}")
+    print("EVALUATION COMPLETE!")
+    print(f"{'='*70}")
+    print(f"Results saved to: {metrics_dir}")
+    print(f"{'='*70}\\n")
 
 
 def main():
     evaluate()
 
 
-if __name__ == \"__main__\":
+if __name__ == "__main__":
     main()
