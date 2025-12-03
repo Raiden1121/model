@@ -19,7 +19,7 @@ def load_generator(defect_type, checkpoint_path=None):
     class_name = CLASS_NAMES[defect_type - 1]
     
     if checkpoint_path is None:
-        checkpoint_path = os.path.join(CHECKPOINT_DIR, f'gan_type{defect_type}', 'generator_final.pth')
+        checkpoint_path = os.path.join(CHECKPOINT_DIR, f'gan_type{defect_type}_improved', 'generator_final.pth')
     
     if not os.path.exists(checkpoint_path):
         print(f"Error: Checkpoint not found: {checkpoint_path}")
@@ -44,7 +44,7 @@ def generate_samples(defect_type, num_samples=None, checkpoint_path=None):
     Generate synthetic images for a specific defect type
     
     Args:
-        defect_type: Type of defect (3 or 4)
+        defect_type: Type of defect (1, 2, 3, or 4)
         num_samples: Number of samples to generate
         checkpoint_path: Path to generator checkpoint (optional)
     """
@@ -55,7 +55,7 @@ def generate_samples(defect_type, num_samples=None, checkpoint_path=None):
     set_seed(RANDOM_SEED)
     
     class_name = CLASS_NAMES[defect_type - 1]
-    num_samples = num_samples or NUM_SYNTHETIC_SAMPLES[class_name]
+    num_samples = num_samples or NUM_SYNTHETIC_SAMPLES.get(class_name, 1000)
     
     # Output directory
     output_dir = os.path.join(GENERATED_DIR, class_name.lower())
@@ -81,7 +81,7 @@ def generate_samples(defect_type, num_samples=None, checkpoint_path=None):
     generated_count = 0
     
     with torch.no_grad():
-        for batch_idx in tqdm(range(num_batches), desc=\"Generating\"):
+        for batch_idx in tqdm(range(num_batches), desc="Generating"):
             # Determine batch size for this iteration
             current_batch_size = min(batch_size, num_samples - generated_count)
             
@@ -94,7 +94,7 @@ def generate_samples(defect_type, num_samples=None, checkpoint_path=None):
             
             # Save images
             for i in range(current_batch_size):
-                img_name = f\"synthetic_type{defect_type}_{generated_count:05d}.jpg\"
+                img_name = f"synthetic_type{defect_type}_{generated_count:05d}.jpg"
                 img_path = os.path.join(output_dir, img_name)
                 save_image(fake_images[i], img_path)
                 generated_count += 1
@@ -109,17 +109,17 @@ def generate_samples(defect_type, num_samples=None, checkpoint_path=None):
 
 def main():
     parser = argparse.ArgumentParser(description='Generate synthetic steel defect images')
-    parser.add_argument('--defect_type', type=int, required=True, choices=[3, 4],
-                        help='Type of defect to generate (3 or 4)')
+    parser.add_argument('--defect_type', type=int, required=True, choices=[1, 2, 3, 4],
+                        help='Type of defect to generate (1, 2, 3, or 4)')
     parser.add_argument('--num_samples', type=int, default=None,
-                        help='Number of samples to generate (default from config)')
+                        help='Number of samples to generate (default from config or 1000)')
     parser.add_argument('--checkpoint', type=str, default=None,
-                        help='Path to generator checkpoint (default: use final checkpoint)')
+                        help='Path to generator checkpoint (default: use improved final checkpoint)')
     
     args = parser.parse_args()
     
     generate_samples(args.defect_type, args.num_samples, args.checkpoint)
 
 
-if __name__ == \"__main__\":
+if __name__ == "__main__":
     main()

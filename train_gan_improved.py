@@ -287,8 +287,8 @@ def train_gan_improved(defect_type, epochs=None):
 
 def main():
     parser = argparse.ArgumentParser(description='Train improved DCGAN for steel defect generation')
-    parser.add_argument('--defect_type', type=int, required=True, choices=[3, 4],
-                        help='Type of defect to generate (3 or 4)')
+    parser.add_argument('--defect_type', type=int, required=True, choices=[1, 2, 3, 4],
+                        help='Type of defect to generate (1, 2, 3, or 4)')
     parser.add_argument('--epochs', type=int, default=None,
                         help=f'Number of epochs (default: {GAN_EPOCHS})')
     

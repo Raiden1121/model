@@ -29,7 +29,7 @@ IMAGE_CHANNELS = 3
 # ============= Class Names =============
 CLASS_NAMES = ['Type_1', 'Type_2', 'Type_3', 'Type_4', 'No_Defect']
 NUM_CLASSES = 5
-RARE_CLASSES = [2, 3]  # Type_3 and Type_4 (0-indexed)
+RARE_CLASSES = [0, 1, 3]  # Type_1, Type_2, and Type_4 (0-indexed) - 稀有類別
 
 # ============= GAN Hyperparameters =============
 GAN_LATENT_DIM = 100
